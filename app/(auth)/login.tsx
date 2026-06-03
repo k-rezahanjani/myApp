@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,160 +10,180 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StatusBar,
+  Image,
 } from "react-native";
 import { router } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import authService from "../../services/auth";
 import { Ionicons } from "@expo/vector-icons";
-import * as SecureStore from "expo-secure-store";
+import * as SecureStore from 'expo-secure-store';
 
 interface LoginFormData {
   username: string;
   password: string;
 }
 
+// const logo = require('../../assets/images/ardabil-fazelab-logo.png');
+
 export default function LoginScreen() {
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
-  const [remember, setRemember] = useState(false);
-
+  const [rememberCredentials, setRememberCredentials] = useState(false);
   const {
     control,
     handleSubmit,
     formState: { errors },
-    reset,
+    reset
   } = useForm<LoginFormData>({
     defaultValues: {
       username: "",
       password: "",
     },
   });
-  // ================= LOAD REMEMBER =================
-  const loadRemember = useCallback(async () => {
-    try {
-      const username = await SecureStore.getItemAsync("rememberedUserName");
-      const password = await SecureStore.getItemAsync("rememberedPassword");
-
-      if (username && password) {
-        setRemember(true);
-        reset({ username, password });
-      }
-    } catch (e) {
-      console.log("load remember error", e);
-    }
-  }, [reset]);
 
   useEffect(() => {
-    loadRemember();
-  }, [loadRemember]);
+    loadRememberMe();
+  }, [control])
 
-  // ================= LOGIN =================
   const onSubmit = async (data: LoginFormData) => {
+    debugger
     setLoading(true);
 
     try {
       const result = await authService.login(data.username, data.password);
 
       if (result.success) {
-        // remember credentials
-        if (remember) {
-          await SecureStore.setItemAsync("rememberedUserName", data.username);
-          await SecureStore.setItemAsync("rememberedPassword", data.password);
-        } else {
-          await SecureStore.deleteItemAsync("rememberedUserName");
-          await SecureStore.deleteItemAsync("rememberedPassword");
+        if (rememberCredentials) {
+          try {
+            await SecureStore.setItem('rememberedUserName', data.username);
+            await SecureStore.setItem('rememebredPassword', data.password);
+            console.log("username and password saved!")
+          } catch (error) {
+            console.log("Error ", error)
+          }
         }
-
         router.replace("/(tabs)/home");
-      } else {
-        Alert.alert("خطا", result.error || "خطا در ورود");
       }
-    } catch (e) {
-      Alert.alert("خطا", "خطای غیرمنتظره رخ داد");
+    } catch (error) {
+      Alert.alert("خطا", "خطایی غیرمنتظره رخ داد");
     } finally {
       setLoading(false);
     }
   };
 
-  // ================= TOGGLE =================
-  const toggleRemember = useCallback(() => {
-    setRemember((prev) => !prev);
-  }, []);
+  const loadRememberMe = async () => {
+    try {
+      const user = await SecureStore.getItem('rememberedUserName')
+      const pass = await SecureStore.getItem('rememebredPassword');
+      if (user && pass) {
+        reset({
+          username: user,
+          password: pass,
+        });
+      }
+      console.log('Load Remember Me Successfully!')
+    } catch (error) {
+      console.log("Loading error ", error)
+    }
+  }
+
+
+  const handleCrendentials = () => {
+    setRememberCredentials(!rememberCredentials)
+  }
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={[styles.container, { paddingTop: insets.top }]}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      style={[styles.container, { paddingTop: insets.top }]}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
+          {/* <Image
+            source={logo}
+            style={{
+              width: 100, height: 100, marginBottom: 10
+            }}
+            resizeMode="contain" /> */}
           <Text style={styles.title}>سامانه قرائت آب و فاضلاب</Text>
           <Text style={styles.subtitle}>استان اردبیل</Text>
         </View>
 
         <View style={styles.form}>
-          {/* USERNAME */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>نام کاربری</Text>
-
             <Controller
               control={control}
-              name="username"
-              rules={{ required: "نام کاربری الزامی است" }}
-              render={({ field: { onChange, value } }) => (
+              rules={{
+                required: "نام کاربری الزامی است",
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   style={[styles.input, errors.username && styles.inputError]}
-                  value={value}
+                  placeholder="نام کاربری خود را وارد کنید"
+                  placeholderTextColor="#999"
+                  onBlur={onBlur}
                   onChangeText={onChange}
-                  placeholder="نام کاربری"
-                  editable={!loading}
+                  value={value}
                   autoCapitalize="none"
+                  editable={!loading}
                 />
               )}
+              name="username"
             />
+            {errors.username && (
+              <Text style={styles.errorText}>{errors.username.message}</Text>
+            )}
           </View>
 
-          {/* PASSWORD */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>رمز عبور</Text>
-
             <Controller
               control={control}
-              name="password"
-              rules={{ required: "رمز عبور الزامی است" }}
-              render={({ field: { onChange, value } }) => (
+              rules={{
+                required: "رمز عبور الزامی است",
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   style={[styles.input, errors.password && styles.inputError]}
-                  value={value}
+                  placeholder="رمز عبور خود را وارد کنید"
+                  placeholderTextColor="#999"
+                  onBlur={onBlur}
                   onChangeText={onChange}
-                  placeholder="رمز عبور"
+                  value={value}
                   secureTextEntry
                   editable={!loading}
                 />
               )}
+              name="password"
             />
+            {errors.password && (
+              <Text style={styles.errorText}>{errors.password.message}</Text>
+            )}
           </View>
 
-          {/* REMEMBER */}
           <TouchableOpacity
             style={styles.rememberContainer}
-            onPress={toggleRemember}
-            activeOpacity={0.7}
-          >
-            <View style={[styles.checkbox, remember && styles.checkboxChecked]}>
-              {remember && <Ionicons name="checkmark" size={16} color="#000" />}
+            onPress={handleCrendentials}
+            activeOpacity={0.7}>
+            <View
+              style={[
+                styles.checkbox, styles.checkboxChecked,
+              ]}>
+              {rememberCredentials && (
+                <Ionicons name="checkmark" size={18} color="black" />
+              )}
             </View>
-
-            <Text style={styles.rememberText}>ذخیره اطلاعات ورود</Text>
+            <Text style={styles.rememberText}>ذخیره اطلاعات برای ورود</Text>
           </TouchableOpacity>
 
-          {/* BUTTON */}
           <TouchableOpacity
-            style={[styles.loginButton, loading && { opacity: 0.6 }]}
+            style={[styles.loginButton, loading && styles.loginButtonDisabled]}
             onPress={handleSubmit(onSubmit)}
-            disabled={loading}
-          >
+            disabled={loading}>
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
