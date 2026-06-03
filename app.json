@@ -19,6 +19,17 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ffd5b633-1d88-4cf3-ad00-7c8b9dae212a"
+      }
+    },
+    "owner": "kavehrhanjani"
   }
 }
