@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Redirect } from 'expo-router';
 import { View, ActivityIndicator } from 'react-native';
-import authServices from '../services/auth';
+import authServices from '../services/authService';
 
 export default function Index() {
   const [isReady, setIsReady] = useState(false);

@@ -14,10 +14,10 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import authService from '../../services/auth';
+import authService from '../../services/authService';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GetWaterPriceList } from '../../services/GetWaterPriceList';
-import WaterPriceListCard from '../../src/components/WaterPriceListCard';
+import WaterPriceListCard from '../../components/WaterPriceListCard';
 import { createTables, saveDataToDatabase, searchByReadLine } from '../../services/db/waterDatabase';
 import { useRouter } from 'expo-router';
 

@@ -16,7 +16,7 @@ import {
 import { router } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import authService from "../../services/auth";
+import authService from "../../services/authService";
 import { Ionicons } from "@expo/vector-icons";
 import * as SecureStore from 'expo-secure-store';
 

@@ -2,10 +2,12 @@
   "expo": {
     "name": "MyApp",
     "slug": "MyApp",
+    "scheme": "myApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "jsEngine": "hermes",
     "ios": {
       "supportsTablet": true
     },
