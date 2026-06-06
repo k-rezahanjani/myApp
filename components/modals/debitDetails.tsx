@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Modal, Text, TextInput, TouchableOpacity, View, StyleSheet, Platform, Alert } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface onProps {
   isVisible: boolean,
@@ -12,10 +12,23 @@ interface onProps {
 export default function DebitDetailsModal({ close, isVisible, data }: onProps) {
 
   const debit = data?.lastDebitPrice
+  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView edges={['top']}>
-      <Modal animationType="slide" transparent={false} visible={isVisible}>
+    <Modal 
+      animationType="slide" 
+      transparent={false} 
+      visible={isVisible}
+      statusBarTranslucent={false}
+    >
+      <SafeAreaView 
+        style={{ 
+          flex: 1, 
+          backgroundColor: '#fff',
+          paddingTop: insets.top,  
+        }}
+        edges={['top', 'left', 'right']}
+      >
         <View style={styles.modalContent}>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>نتیجه بدهی</Text>
@@ -23,6 +36,7 @@ export default function DebitDetailsModal({ close, isVisible, data }: onProps) {
               <Ionicons name="close" color="#ffffffff" size={22} />
             </TouchableOpacity>
           </View>
+          
           <View style={{ flexDirection: 'row-reverse' }}>
             <View style={styles.half}>
               <View style={styles.fix}>
@@ -88,20 +102,20 @@ export default function DebitDetailsModal({ close, isVisible, data }: onProps) {
           <TouchableOpacity style={styles.modalSavebtn} onPress={() => Alert.alert('توجه', 'این بخش در حال توسعه می باشد.')}>
             <Text style={{ padding: 2, color: '#ffff' }}>پرداخت</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.modalSavebtn} onPress={close}>
+            <Text style={{ padding: 2, color: '#ffff' }}>بستن</Text>
+          </TouchableOpacity>
         </View>
-      </Modal >
-    </SafeAreaView>
-
+      </SafeAreaView>
+    </Modal>
   )
 }
 
-
 const styles = StyleSheet.create({
   modalContent: {
+    // flex: 1, 
     width: '100%',
     backgroundColor: '#ffffffff',
-    borderTopRightRadius: 18,
-    borderTopLeftRadius: 18,
   },
   titleContainer: {
     height: 50,
@@ -147,7 +161,6 @@ const styles = StyleSheet.create({
   fix: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    // width: '50%',
     marginLeft: 'auto',
     padding: 0,
     justifyContent: 'flex-start'
@@ -174,5 +187,4 @@ const styles = StyleSheet.create({
   debitValue: {
     textAlign: 'center'
   }
-
 })
