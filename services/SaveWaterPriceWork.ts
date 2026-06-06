@@ -2,7 +2,7 @@ import authServices from "./authService";
 
 export async function SaveWaterPriceList(payload: any) {
     const API_URL =
-        "https://moshtarakin.abfaazarbaijan.ir/SanjabServices/api/SaveWaterPriceWork";
+        "https://moshtarakin.abfaazarbaijan.ir/SanjabService/api/SaveWaterPriceWork";
         // "http://emeter.abfasb.ir/SanjabServicesTest/api/SaveWaterPriceWork";
         // "http://ardabfa.ir/sanjabservice/api/GetWaterPriceWorkList";
 
