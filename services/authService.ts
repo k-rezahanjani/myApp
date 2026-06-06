@@ -2,8 +2,8 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { ToastAndroid } from 'react-native';
 
-// const API_URL = 'http://ardabfa.ir/sanjabservice/token';
-const API_URL = 'http://emeter.abfasb.ir/sanjabServicesTest/token';
+const API_URL = 'http://ardabfa.ir/sanjabservice/token';
+// const API_URL = 'http://emeter.abfasb.ir/sanjabServicesTest/token';
 // const API_URL = 'https://moshtarakin.abfaazarbaijan.ir/SanjabServices/token';
 
 interface AuthResponse {

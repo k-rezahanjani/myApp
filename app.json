@@ -16,7 +16,8 @@
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "monochromeImage": "./assets/android-icon-monochrome.png",
+        "usesCleartextTraffic": true
       },
       "package": "com.kavehrhanjani.MyApp"
     },
@@ -27,6 +28,7 @@
       "expo-router",
       "expo-secure-store",
       "expo-build-properties"
+
     ],
     "extra": {
       "router": {},
