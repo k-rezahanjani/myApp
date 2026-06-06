@@ -1,9 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { Modal, Text, TextInput, TouchableOpacity, View, StyleSheet, Platform } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface onProps {
-    isVisible: boolean, 
+    isVisible: boolean,
     data: any,
     close: () => void;
 }
@@ -14,14 +15,14 @@ interface payloadProps {
     cellPhone: any | number
 }
 
-export default function SubscriberModal({close, isVisible, data}: onProps) {
+export default function SubscriberModal({ close, isVisible, data }: onProps) {
     const [postCode, setPostCode] = useState('');
     const [phone, setPhone] = useState('');
     const [cellPhone, setCellPhone] = useState('');
 
 
     useEffect(() => {
-        if(data && isVisible) {
+        if (data && isVisible) {
             setPostCode(data?.postalCode || 0);
             setPhone(data?.phone || 0)
             setCellPhone(data?.cellPhone || 0)
@@ -29,58 +30,59 @@ export default function SubscriberModal({close, isVisible, data}: onProps) {
     }, [])
 
     return (
-        <Modal animationType="slide" transparent={false} visible={isVisible}>
-            <View style={styles.modalContent}>
-                <View style={styles.titleContainer}>
-                    <Text style={styles.title}>دریافت اطلاعات پایه مشترکین</Text>
-                    <TouchableOpacity onPress={close}>
-                        <Ionicons name="close" color="#ffffffff" size={22} />
-                    </TouchableOpacity>
+        <SafeAreaView edges={['top']}>
+            <Modal animationType="slide" transparent={false} visible={isVisible}>
+                <View style={styles.modalContent}>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.title}>دریافت اطلاعات پایه مشترکین</Text>
+                        <TouchableOpacity onPress={close}>
+                            <Ionicons name="close" color="#ffffffff" size={22} />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ padding: 10 }}>
+                        <Text style={{ direction: 'rtl', margin: 5 }}>کد پستی</Text>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                keyboardType="numeric"
+                                placeholder="کد پستی"
+                                placeholderTextColor="#999"
+                                value={postCode}
+                                onChangeText={setPostCode}
+                                textAlign="right"
+                            />
+                        </View>
+                        <Text style={{ direction: 'rtl', margin: 5 }}>تلفن</Text>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                keyboardType="numeric"
+                                placeholder="تلفن"
+                                value={phone}
+                                onChangeText={setPhone}
+                                placeholderTextColor="#999"
+                                textAlign="right"
+                            />
+                        </View>
+                        <Text style={{ direction: 'rtl', margin: 5 }}>تلفن همراه</Text>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                keyboardType="numeric"
+                                placeholder="تلفن همراه"
+                                placeholderTextColor="#999"
+                                textAlign="right"
+                                value={cellPhone}
+                                onChangeText={setCellPhone}
+                            />
+                        </View>
+                        <TouchableOpacity style={styles.modalSavebtn}>
+                            <Text style={{ padding: 2, color: '#ffff' }}>ذخیره</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <View style={{ padding: 10 }}>
-                    <Text style={{ direction: 'rtl', margin: 5 }}>کد پستی</Text>
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            keyboardType="numeric"
-                            placeholder="کد پستی"
-                            placeholderTextColor="#999"
-                            value={postCode}
-                            onChangeText={setPostCode}
-                            textAlign="right"
-                        />
-                    </View>
-                    <Text style={{ direction: 'rtl', margin: 5 }}>تلفن</Text>
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            keyboardType="numeric"
-                            placeholder="تلفن"
-                            value={phone}
-                            onChangeText={setPhone}
-                            placeholderTextColor="#999"
-                            textAlign="right"
-                        />
-                    </View>
-                    <Text style={{ direction: 'rtl', margin: 5 }}>تلفن همراه</Text>
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            keyboardType="numeric"
-                            placeholder="تلفن همراه"
-                            placeholderTextColor="#999"
-                            textAlign="right"
-                            value={cellPhone}
-                            onChangeText={setCellPhone}
-                        />
-                    </View>
-                    <TouchableOpacity style={styles.modalSavebtn}>
-                        <Text style={{ padding: 2, color: '#ffff' }}>ذخیره</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </Modal>
-
+            </Modal>
+        </SafeAreaView>
     )
 }
 

@@ -5,7 +5,7 @@
     "scheme": "myApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon_ab.png",
     "userInterfaceStyle": "light",
     "jsEngine": "hermes",
     "ios": {
@@ -13,10 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#E6F4FE"
       },
       "package": "com.kavehrhanjani.MyApp"
     },
