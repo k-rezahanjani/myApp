@@ -26,7 +26,12 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
-      "expo-build-properties"
+      "expo-build-properties",
+      {
+        "android": {
+          "usesCleartextTraffic": true
+        }
+      }
     ],
     "extra": {
       "router": {},
@@ -34,6 +39,12 @@
         "projectId": "ffd5b633-1d88-4cf3-ad00-7c8b9dae212a"
       }
     },
-    "owner": "kavehrhanjani"
+    "owner": "kavehrhanjani",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ffd5b633-1d88-4cf3-ad00-7c8b9dae212a"
+    }
   }
 }
