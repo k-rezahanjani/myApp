@@ -26,12 +26,7 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
-      "expo-build-properties",
-      "expo-network-security-config",
-      {
-        "networkSecurityConfig": "./assets/configs/network_security_config.xml",
-        "enable": true
-      }
+      "expo-build-properties"
     ],
     "extra": {
       "router": {},
