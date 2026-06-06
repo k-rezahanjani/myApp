@@ -1,8 +1,8 @@
 import authServices from "./authService";
 
 export async function GetWaterPriceWorkReadBasicModel() {
-    const API_URL = `http://ardabfa.ir/sanjabservice/api/GetWaterPriceWorkReadBasicModel`;
-    // const API_URL = `http://emeter.abfasb.ir/sanjabServicesTest/api/GetWaterPriceWorkReadBasicModel`;
+    // const API_URL = `http://ardabfa.ir/sanjabservice/api/GetWaterPriceWorkReadBasicModel`;
+    const API_URL = `http://emeter.abfasb.ir/sanjabServicesTest/api/GetWaterPriceWorkReadBasicModel`;
     // const API_URL = `https://moshtarakin.abfaazarbaijan.ir/SanjabServices/api/GetWaterPriceWorkList`;
     try {
         const token = await authServices.getAccessToken();
