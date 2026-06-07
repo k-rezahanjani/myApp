@@ -65,9 +65,10 @@ export default function LoginScreen() {
           }
         }
         router.replace("/(tabs)/home");
+        console.log('Login response: ', result)
       }
     } catch (error) {
-      Alert.alert("خطا", "خطایی غیرمنتظره رخ داد");
+      console.log('Error Login (loginscreen) ', error)
     } finally {
       setLoading(false);
     }

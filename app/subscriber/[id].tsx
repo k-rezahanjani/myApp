@@ -30,6 +30,7 @@ import SubscriberModal from "../../components/modals/subscriberModal";
 import DebitDetailsModal from "../../components/modals/debitDetails";
 import DetailsModal from "../../components/modals/details";
 import { getReadInfosForWork } from "../../services/db/waterDatabase";
+import CameraScreen from "../../components/camera";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -53,6 +54,9 @@ export default function SubscriberScreen() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isDebitDetailsModalOpen, setIsDebitDetailsModalOpen] = useState(false);
+
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
   const workId = params.workId;
@@ -350,6 +354,16 @@ export default function SubscriberScreen() {
     }
   };
 
+  const handleCameraCapture = (imageUri: string) => {
+    console.log('عکس گرفته شده:', imageUri);
+    setCapturedImage(imageUri);
+    // اینجا می‌تونید عکس رو پردازش کنید
+    // مثلاً OCR برای خوندن عدد کنتور
+  };
+
+  const handleCameraClose = () => {
+    setIsCameraActive(false);
+  };
 
   if (loading) {
     return (
@@ -389,9 +403,9 @@ export default function SubscriberScreen() {
       {/* نتیجه بدهی */}
       {
         isDebitDetailsModalOpen &&
-        <DebitDetailsModal 
-          data={currentSubscriber} 
-          isVisible={isDebitDetailsModalOpen} 
+        <DebitDetailsModal
+          data={currentSubscriber}
+          isVisible={isDebitDetailsModalOpen}
           close={() => setIsDebitDetailsModalOpen(false)} />
       }
 
@@ -472,10 +486,22 @@ export default function SubscriberScreen() {
                 />
                 <TouchableOpacity
                   style={styles.cameraButton}
-                  onPress={() => Alert.alert("دوربین", "در حال باز کردن دوربین...")}>
+                  onPress={() => setIsCameraActive(true)}>
                   <Ionicons name="camera-outline" size={22} color="#000000ff" />
                 </TouchableOpacity>
               </View>
+
+              {/* مودال دوربین */}
+              <Modal
+                visible={isCameraActive}
+                animationType="slide"
+                onRequestClose={handleCameraClose}
+              >
+                <CameraScreen
+                  onClose={handleCameraClose}
+                  onCapture={handleCameraCapture}
+                />
+              </Modal>
 
               <Text style={styles.label}>وضعیت قرائت:</Text>
               <View style={styles.inputContainer}>
@@ -530,20 +556,22 @@ export default function SubscriberScreen() {
                   <Ionicons name="mic-outline" size={22} color="#000000ff" />
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity
-                style={styles.submitButton}
-                onPress={handleSubmitReading}
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <ActivityIndicator color="#fff" size="small" />
-                ) : (
-                  <>
-                    <Text style={styles.submitButtonText}>ثبت قرائت</Text>
-                    <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
-                  </>
-                )}
-              </TouchableOpacity>
+              <View style={styles.circleButtonContainer}>
+                <TouchableOpacity
+                  style={styles.circleButton}
+                  onPress={handleSubmitReading}
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    <ActivityIndicator color="#fff" size="small" />
+                  ) : (
+                    <>
+                      {/* <Text style={styles.submitButtonText}>ثبت قرائت</Text> */}
+                      <Ionicons name="checkmark" size={34} color="#ffffffff" />
+                    </>
+                  )}
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </ScrollView>
@@ -626,4 +654,39 @@ const styles = StyleSheet.create({
   navButtonDisabled: { opacity: 0.5 },
   counterText: { textAlign: "center", marginTop: 8, fontSize: 11, color: "#999", fontFamily: "nazanin" },
   picker: { flex: 1, height: 55, color: '#333', fontFamily: 'nazanin', fontSize: 14, textAlign: 'left', direction: 'ltr' },
+  circleButtonContainer: {
+    width: 60,
+    height: 60,
+    marginHorizontal: 60,
+    borderWidth: 4,
+    borderColor: '#1ca4ffff',
+    borderRadius: 42,
+    padding: 3,
+    marginRight: 'auto',
+    marginLeft: 'auto',
+  },
+  circleButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 42,
+    backgroundColor: '#1ca4ffff',
+  },
+  capturedImageContainer: {
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  capturedImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#4a90e2',
+  },
+  capturedImageText: {
+    marginTop: 5,
+    fontSize: 12,
+    color: '#666',
+    fontFamily: 'nazanin',
+  },
 });

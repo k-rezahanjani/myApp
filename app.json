@@ -30,6 +30,19 @@
             "usesCleartextTraffic": true
           }
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "اجازه دسترسی به دوربین برای گرفتن عکس"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "اجازه دسترسی به گالری برای انتخاب عکس",
+          "cameraPermission": "اجازه دسترسی به دوربین برای گرفتن عکس"
+        }
       ]
     ],
     "extra": {

@@ -24,10 +24,10 @@ export default function DebitDetailsModal({ close, isVisible, data }: onProps) {
       <SafeAreaView 
         style={{ 
           flex: 1, 
-          backgroundColor: '#fff',
-          paddingTop: insets.top,  
+          // backgroundColor: '#fff',
+          marginTop: insets.top,  
         }}
-        edges={['top', 'left', 'right']}
+        edges={['top']}
       >
         <View style={styles.modalContent}>
           <View style={styles.titleContainer}>

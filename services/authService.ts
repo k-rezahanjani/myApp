@@ -63,7 +63,6 @@ class AuthService {
     }
 
     async login(username: string, password: string) {
-        debugger
         const formBody = new URLSearchParams({
             grant_type: 'password',
             client_id: 'ngauth',
@@ -82,7 +81,7 @@ class AuthService {
             });
 
             const data = await response.json();
-
+            console.log("Auth service: ", response)
             if (response.ok && data.access_token) {
                 await this.setTokens(data);
 

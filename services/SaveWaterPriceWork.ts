@@ -2,9 +2,9 @@ import authServices from "./authService";
 
 export async function SaveWaterPriceList(payload: any) {
     const API_URL =
+    // "http://ardabfa.ir/sanjabservice/api/GetWaterPriceWorkList";
         "https://moshtarakin.abfaazarbaijan.ir/SanjabService/api/SaveWaterPriceWork";
         // "http://emeter.abfasb.ir/SanjabServicesTest/api/SaveWaterPriceWork";
-        // "http://ardabfa.ir/sanjabservice/api/GetWaterPriceWorkList";
 
     const token = await authServices.getAccessToken();
 
