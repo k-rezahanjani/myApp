@@ -1,19 +1,18 @@
 {
   "expo": {
-    "name": "MyApp",
+    "name": "قرائت",
     "slug": "MyApp",
     "scheme": "myApp",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon_ab.png",
     "userInterfaceStyle": "light",
-    "jsEngine": "hermes",
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE"
+        "backgroundColor": "#1ca4ffff"
       },
       "package": "com.kavehrhanjani.MyApp"
     },
@@ -37,13 +36,7 @@
           "cameraPermission": "اجازه دسترسی به دوربین برای گرفتن عکس"
         }
       ],
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "اجازه دسترسی به گالری برای انتخاب عکس",
-          "cameraPermission": "اجازه دسترسی به دوربین برای گرفتن عکس"
-        }
-      ]
+      "expo-asset"
     ],
     "extra": {
       "router": {},

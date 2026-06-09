@@ -1,10 +1,10 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
-import { ToastAndroid } from 'react-native';
+import { Alert, ToastAndroid } from 'react-native';
 
 // const API_URL = 'http://ardabfa.ir/sanjabservice/token';
-// const API_URL = 'http://emeter.abfasb.ir/sanjabServicesTest/token';
-const API_URL = 'https://moshtarakin.abfaazarbaijan.ir/SanjabService/token';
+const API_URL = 'http://emeter.abfasb.ir/sanjabServicesTest/token';
+// const API_URL = 'https://moshtarakin.abfaazarbaijan.ir/SanjabService/token';
 
 interface AuthResponse {
     access_token: string;
@@ -30,7 +30,6 @@ class AuthService {
                 fullName: authData.fullName,
                 role: authData.role
             }));
-            console.log('Tokens saved successfully', authData);
         } catch (error) {
             console.error('Error saving tokens:', error);
         }
@@ -81,7 +80,6 @@ class AuthService {
             });
 
             const data = await response.json();
-            console.log("Auth service: ", response)
             if (response.ok && data.access_token) {
                 await this.setTokens(data);
 
@@ -105,7 +103,6 @@ class AuthService {
             }
         } catch (error: any) {
             ToastAndroid.show('خطا در شبکه', 0.5)
-            console.log("Error ", error)
             if (error.message === 'Network request failed') {
                 return {
                     success: false,
@@ -158,7 +155,7 @@ class AuthService {
                 })
             }
         } catch (error) {
-            console.log('Logout error:', error);
+            Alert.alert('Logout error:', error);
         } finally {
             await this.clearAllData();
 
@@ -177,7 +174,6 @@ class AuthService {
         for (const key of keys) {
             await SecureStore.deleteItemAsync(key);
         }
-        console.log('logout succeed')
     }
 
     async isAuthenticated(): Promise<boolean> {

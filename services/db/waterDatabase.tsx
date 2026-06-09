@@ -239,36 +239,6 @@ export const saveReadingInfo = async () => {
     )
 }
 
-
-
-// export const searchByReadLine = async (readLineCode: string | number) => {
-//     try {
-//         const searchValue = String(readLineCode).replace(/-/g, '');
-
-//         let result = await db.getAllAsync(
-//             `SELECT * FROM water_price_work WHERE REPLACE(readLineCode, '-', '') = ?`,
-//             [searchValue]
-//         );
-
-//         let iterator = result.map((id) => {
-
-//         })
-
-//         if (!result || result.length === 0) {
-//             result = await db.getAllAsync(
-//                 `SELECT * FROM water_price_work WHERE REPLACE(readLineCode, '-', '') LIKE ?`,
-//                 [`%${searchValue}%`]
-//             );
-//         }
-
-//         return result;
-//     } catch (error) {
-//         console.log('Search error:', error);
-//         throw error;
-//     }
-// }
-
-
 export const searchByReadLine = async (query: string) => {
     debugger
     if (!query || query.trim() === '') {
@@ -318,6 +288,16 @@ export const searchByReadLine = async (query: string) => {
         return uniqueWorks;
     } catch (error) {
         console.error('Database search error:', error);
-        return []; 
+        return [];
     }
+};
+
+export const detailsInfo = async (id: number) => {
+    return await db.getFirstAsync(
+        `SELECT
+        cityDesc,
+        FROM water_price_work
+        WHERE tblWaterPriceWorkId = ?`,
+        [id]
+    );
 };

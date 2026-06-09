@@ -18,7 +18,7 @@ import authService from '../../services/authService';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GetWaterPriceList } from '../../services/GetWaterPriceList';
 import WaterPriceListCard from '../../components/WaterPriceListCard';
-import { createTables, saveDataToDatabase, searchByReadLine } from '../../services/db/waterDatabase';
+import { createTables, detailsInfo, saveDataToDatabase, searchByReadLine } from '../../services/db/waterDatabase';
 import { useRouter } from 'expo-router';
 
 
@@ -31,12 +31,15 @@ export default function HomeScreen() {
   const [search, setSearch] = useState<string>('');
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [detailsVisible, setDetailsVisible] = useState(false);
+
   const router = useRouter();
 
   useEffect(() => {
     loadData();
   }, []);
-
   const loadData = async () => {
     try {
       const data = await authService.getUserData();
@@ -44,12 +47,10 @@ export default function HomeScreen() {
       const result = await GetWaterPriceList('0');
       await createTables();
       await saveDataToDatabase(result);
-      
       setPriceList(result);
       setFilteredPriceList(result);
       setHasSearched(false);
-      setSearch(''); 
-      // console.log('Result Water Price List ', result)
+      setSearch('');
     } catch (error) {
       Alert.alert("خطا", "خطا در دریافت اطلاعات");
     }
@@ -62,15 +63,27 @@ export default function HomeScreen() {
   };
 
   const handleDetailsPress = (item: any) => {
-    console.log("Details pressed for:", item);
+    setSelectedItem(item);
+    setDetailsVisible(true);
+
   };
 
-  const handleMapPress = (item: any) => {
-    setVisible(!visible);
-  };
+  // const handleMapPress = (item: any) => {
+  //   const gis = item?.waterPriceWorkReadInfo?.gisLocation;
+  //   if (!gis || gis.length < 2) {
+  //     Alert.alert('خطا', 'مختصات GIS موجود نیست');
+  //     return;
+  //   }
+
+  //   setMapCoords({
+  //     latitude: gis[1],
+  //     longitude: gis[0],
+  //   });
+
+  //   setMapVisible(true);
+  // };
 
   const handleContinuePress = (item: any) => {
-    console.log("Continue pressed for ID:", item.tblWaterPriceWorkId);
     const workId = item.tblWaterPriceWorkId;
     router.push({
       pathname: `/subscriber/${item.tblWaterPriceWorkId}`,
@@ -98,7 +111,7 @@ export default function HomeScreen() {
 
   const performSearch = async () => {
     const searchValue = search.trim();
-    
+
     if (!searchValue) {
       setFilteredPriceList(priceList);
       setHasSearched(false);
@@ -106,17 +119,16 @@ export default function HomeScreen() {
     }
 
     setIsSearching(true);
-    
+
     try {
       const cleanSearch = searchValue.replace(/-/g, '');
       const readLineNumber = Number(cleanSearch);
-      
+
       let searchResults = null;
-      
+
       if (!isNaN(readLineNumber) && cleanSearch.length > 0) {
         const dbResults = await searchByReadLine(cleanSearch);
-        console.log("Search Result ", dbResults)
-        
+
         if (dbResults && dbResults.length > 0) {
           searchResults = dbResults;
         } else {
@@ -129,27 +141,27 @@ export default function HomeScreen() {
         searchResults = priceList?.waterPriceWork?.filter((work: any) => {
           const workCode = work.readLineCode?.replace(/-/g, '') || '';
           return workCode.includes(cleanSearch) ||
-                 work.readLineDesc?.includes(searchValue) ||
-                 work.cityDesc?.includes(searchValue) ||
-                 work.zoneDesc?.includes(searchValue);
+            work.readLineDesc?.includes(searchValue) ||
+            work.cityDesc?.includes(searchValue) ||
+            work.zoneDesc?.includes(searchValue);
         });
       }
-      
+
       if (searchResults && searchResults.length > 0) {
-        setFilteredPriceList({ 
-          ...priceList, 
-          waterPriceWork: searchResults 
+        setFilteredPriceList({
+          ...priceList,
+          waterPriceWork: searchResults
         });
         setHasSearched(true);
       } else {
-        setFilteredPriceList({ 
-          ...priceList, 
-          waterPriceWork: [] 
+        setFilteredPriceList({
+          ...priceList,
+          waterPriceWork: []
         });
         setHasSearched(true);
         Alert.alert('نتیجه جستجو', 'هیچ نتیجه‌ای یافت نشد');
       }
-      
+
     } catch (error) {
       console.error('Search error:', error);
       Alert.alert('خطا', 'مشکلی در جستجو پیش آمد');
@@ -205,7 +217,7 @@ export default function HomeScreen() {
             </View>
           </View>
         </View>
-        
+
         {/* Search Bar */}
         <View style={styles.searchContainer}>
           <View style={styles.searchInputWrapper}>
@@ -221,7 +233,7 @@ export default function HomeScreen() {
               textAlign="right"
             />
             {search.length > 0 && (
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.clearButton}
                 onPress={handleClearSearch}
               >
@@ -229,7 +241,7 @@ export default function HomeScreen() {
               </TouchableOpacity>
             )}
           </View>
-          
+
           <TouchableOpacity
             style={styles.searchButton}
             onPress={handleSearchPress}
@@ -250,7 +262,7 @@ export default function HomeScreen() {
         {hasSearched && (
           <View style={styles.resultInfo}>
             <Text style={styles.resultInfoText}>
-              {resultCount > 0 
+              {resultCount > 0
                 ? `${resultCount} نتیجه یافت شد`
                 : 'نتیجه‌ای یافت نشد'
               }
@@ -264,8 +276,8 @@ export default function HomeScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         refreshControl={
-          <RefreshControl 
-            refreshing={refreshing} 
+          <RefreshControl
+            refreshing={refreshing}
             onRefresh={onRefresh}
             colors={['#4a90e2']}
             tintColor="#4a90e2"
@@ -279,7 +291,7 @@ export default function HomeScreen() {
             <Text style={styles.noResultText}>
               موردی با این مشخصات پیدا نشد
             </Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.showAllButton}
               onPress={handleClearSearch}
             >
@@ -292,31 +304,119 @@ export default function HomeScreen() {
           <WaterPriceListCard
             data={filteredPriceList || priceList}
             onDetailsPress={handleDetailsPress}
-            onMapPress={handleMapPress}
+            // onMapPress={handleMapPress}
             onContinuePress={handleContinuePress}
           />
         )}
 
-        {/* Modal */}
+        {/* Map */}
+        {/* <Modal
+          transparent={true}
+          animationType="slide"
+          visible={mapVisible}
+          onRequestClose={() => setMapVisible(false)}
+        >
+          <View style={{ flex: 1 }}>
+            {mapCoords &&
+              <MapView
+                style={{ flex: 1 }}
+                initialRegion={{
+                  latitude: mapCoords.latitude,
+                  longitude: mapCoords.longitude,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+                }}
+              >
+                <Marker
+                  coordinate={{
+                    latitude: mapCoords.latitude,
+                    longitude: mapCoords.longitude,
+                  }}
+                />
+              </MapView>
+            }
+            <TouchableOpacity
+              onPress={() => setMapVisible(false)}
+              style={{
+                position: 'absolute',
+                top: 40,
+                right: 20,
+                backgroundColor: 'white',
+                padding: 10,
+                borderRadius: 8,
+              }}
+            >
+              <Text>بستن</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal> */}
+        {/* Details */}
         <Modal
           transparent={true}
-          animationType="fade"
-          visible={visible}
-          onRequestClose={() => setVisible(false)}
+          animationType="slide"
+          visible={detailsVisible}
+          onRequestClose={() => setDetailsVisible(false)}
         >
           <View style={styles.overlay}>
             <View style={styles.modalBox}>
-              <View style={styles.centerContainer}>
-                <Ionicons name="map-outline" size={50} color="#4a90e2" />
-                <Text style={{ fontFamily: 'iransans', marginTop: 10, fontSize: 16 }}>
-                  نقشه باز شد
-                </Text>
-              </View>
-              <TouchableOpacity 
-                style={styles.closeModalButton}
-                onPress={() => setVisible(false)}
+              <Text
+                style={{
+                  fontFamily: "iransans",
+                  fontSize: 16,
+                  marginBottom: 15,
+                  fontWeight: "bold",
+                }}
               >
-                <Text style={styles.closeModalText}>بستن</Text>
+                اطلاعات گردش کار
+              </Text>
+
+              <View style={styles.detailsItems}>
+                <Text>نام شهر: </Text>
+                <Text>{selectedItem?.cityDesc}</Text>
+              </View>
+
+              <View style={styles.detailsItems}>
+                <Text>نام منطقه: </Text>
+                <Text>{selectedItem?.zoneDesc}</Text>
+              </View>
+
+              <View style={styles.detailsItems}>
+                <Text>مسیر قرائت:  </Text>
+                <Text>{selectedItem?.readLineCode}</Text>
+              </View>
+
+              <View style={styles.detailsItems}>
+                <Text>سال/دوره: </Text>
+                <Text>{selectedItem?.year}/{selectedItem?.cycleNumber}</Text>
+              </View>
+
+              <View style={styles.detailsItems}>
+                <Text>شماره گردش کار: </Text>
+                <Text>{selectedItem?.readLineDesc}</Text>
+              </View>
+
+              <View style={styles.detailsItems}>
+                <Text>نوع گردش کار: </Text>
+                <Text>{selectedItem?.workKindDesc}</Text>
+              </View>
+
+              <View style={styles.detailsItems}>
+                <Text> تعداد مشترکین: </Text>
+                <Text>{selectedItem?.waterPriceWorkCount}</Text>
+              </View>
+
+              <View style={styles.detailsItems}>
+                <Text> تعداد اشتراک فاقد قرائت: </Text>
+                <Text>{selectedItem?.waterPriceWorkCount}</Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.closeModalButton}
+                onPress={() => setDetailsVisible(false)}
+              >
+                <Text style={styles.closeModalText}>
+                  بستن
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -460,7 +560,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 15,
     padding: 20,
-    alignItems: 'center',
+    direction: 'rtl'
   },
   closeModalButton: {
     backgroundColor: '#4a90e2',
@@ -472,6 +572,12 @@ const styles = StyleSheet.create({
   closeModalText: {
     color: 'white',
     fontFamily: 'iransans',
+    textAlign: 'center',
     fontSize: 14,
   },
+  detailsItems: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: 30
+  }
 });

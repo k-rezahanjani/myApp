@@ -7,7 +7,8 @@ import {
   ScrollView,
   LayoutAnimation,
   Platform,
-  UIManager
+  UIManager,
+  Modal
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -18,16 +19,15 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 interface WaterPriceListCardProps {
   data: any;
   onDetailsPress?: (item: any) => void;
-  onMapPress?: (item: any) => void;
+  // onMapPress?: (item: any) => void;
   onContinuePress?: (item: any) => void;
 }
 
-const WaterPriceListCard = ({ data, onDetailsPress, onMapPress, onContinuePress }: WaterPriceListCardProps) => {
+const WaterPriceListCard = ({ data, onDetailsPress, onContinuePress }: WaterPriceListCardProps) => {
   const [items, setItems] = useState<any[]>([]);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    console.log("WaterPriceListCard received data:", data);
 
     if (data) {
       if (data.waterPriceWork && Array.isArray(data.waterPriceWork)) {
@@ -98,8 +98,9 @@ const WaterPriceListCard = ({ data, onDetailsPress, onMapPress, onContinuePress 
                     منطقه: {item.cityDesc}
                   </Text>
                 </View>
-
-                <Ionicons name='ellipsis-vertical' size={16} color="#666" style={{ marginLeft: 15 }} />
+                <TouchableOpacity onPress={() => onDetailsPress?.(item)}>
+                  <Ionicons name='ellipsis-vertical' size={16} color="#666" style={{ marginLeft: 15 }} />
+                </TouchableOpacity>
 
                 <Ionicons
                   name={expandedIndex === index ? "chevron-up" : "chevron-down"}
@@ -156,13 +157,13 @@ const WaterPriceListCard = ({ data, onDetailsPress, onMapPress, onContinuePress 
                     <Ionicons name="reload-outline" size={16} color="#4a90e2" />
                   </TouchableOpacity>
 
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     style={styles.detailsButton}
                     onPress={() => onMapPress?.(item)}
                   >
                     <Text style={styles.detailsButtonText}>نقشه مسیر قرائت</Text>
                     <Ionicons name="map-outline" size={18} color="#4a90e2" />
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
 
                   <TouchableOpacity
                     style={styles.detailsButton}

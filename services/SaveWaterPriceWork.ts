@@ -3,8 +3,8 @@ import authServices from "./authService";
 export async function SaveWaterPriceList(payload: any) {
     const API_URL =
     // "http://ardabfa.ir/sanjabservice/api/GetWaterPriceWorkList";
-        "https://moshtarakin.abfaazarbaijan.ir/SanjabService/api/SaveWaterPriceWork";
-        // "http://emeter.abfasb.ir/SanjabServicesTest/api/SaveWaterPriceWork";
+        // "https://moshtarakin.abfaazarbaijan.ir/SanjabService/api/SaveWaterPriceWork";
+        "http://emeter.abfasb.ir/SanjabServicesTest/api/SaveWaterPriceWork";
 
     const token = await authServices.getAccessToken();
 
@@ -18,9 +18,6 @@ export async function SaveWaterPriceList(payload: any) {
     });
 
     const result = await response.json();
-
-    console.log("Response:", result);
-
     if (!response.ok) {
         throw new Error(
             result?.exception?.message ||
