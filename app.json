@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "قرائت",
-    "slug": "MyApp",
+    "slug": "myapp",
     "scheme": "myApp",
     "version": "1.1.0",
     "orientation": "portrait",
@@ -41,15 +41,12 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "ffd5b633-1d88-4cf3-ad00-7c8b9dae212a"
+        "projectId": "1b614a55-977d-43ac-a29f-7ac816076fbf"
       }
     },
-    "owner": "kavehrhanjani",
+    "owner": "m-fereidunis-team",
     "runtimeVersion": {
       "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/ffd5b633-1d88-4cf3-ad00-7c8b9dae212a"
     }
   }
 }

@@ -28,8 +28,8 @@ export default function MapScreen({ data, isVisible, close }: MapScreenProps) {
   const [htmlContent, setHtmlContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const latitude = data?.xLocation || 35.6892;
-  const longitude = data?.yLocation || 35.6892;
+  const latitude = data?.xLocation || 35.699444;
+  const longitude = data?.yLocation || 51.337776;
 
   useEffect(() => {
     let isMounted = true;
