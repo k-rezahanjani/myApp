@@ -51,9 +51,7 @@
       }
     },
     "owner": "m-fereidunis-team",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.1.0",
     "updates": {
       "url": "https://u.expo.dev/1b614a55-977d-43ac-a29f-7ac816076fbf"
     }
