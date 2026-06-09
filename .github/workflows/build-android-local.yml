@@ -5,7 +5,6 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
-# این قسمت اجازه می‌دهد وورک‌فلو برای تست Node.js 24 اجرا شود
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -16,7 +15,7 @@ jobs:
       - name: 1️⃣ دریافت کدها
         uses: actions/checkout@v4
 
-      - name: 2️⃣ نصب Node.js 22 (نسخه پایدار و سازگار)
+      - name: 2️⃣ نصب Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -25,16 +24,25 @@ jobs:
       - name: 3️⃣ نصب وابستگی‌ها
         run: npm ci
 
-      - name: 4️⃣ آماده‌سازی EAS (برای بیلد محلی)
+      - name: 4️⃣ نصب Java (برای Gradle)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 5️⃣ تنظیم مجوز برای gradlew
+        run: chmod +x android/gradlew
+
+      - name: 6️⃣ تنظیم EAS
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: 5️⃣ بیلد گرفتن APK (محلی و رایگان)
+      - name: 7️⃣ ساخت APK
         run: eas build --local --platform android --non-interactive --output ./app-build.apk
 
-      - name: 6️⃣ آپلود فایل نهایی
+      - name: 8️⃣ ذخیره فایل
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
