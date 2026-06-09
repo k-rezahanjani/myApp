@@ -14,7 +14,13 @@
       "adaptiveIcon": {
         "backgroundColor": "#1ca4ffff"
       },
-      "package": "com.kavehrhanjani.MyApp"
+      "package": "com.kavehrhanjani.MyApp",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -47,6 +53,9 @@
     "owner": "m-fereidunis-team",
     "runtimeVersion": {
       "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/1b614a55-977d-43ac-a29f-7ac816076fbf"
     }
   }
 }
