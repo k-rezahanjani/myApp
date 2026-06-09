@@ -10,11 +10,11 @@ export const HeaderBar = ({ onMenuPress, onBackPress }: HeaderBarProps) => {
   return (
     <View style={styles.header}>
       <TouchableOpacity style={{ marginRight: 'auto' }} onPress={onMenuPress}>
-        <Ionicons name="list-outline" size={25} style={{ color: '#ffff' }} />
+        <Ionicons name="list-outline" size={30} style={{ color: '#ffff' }} />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>قرائت کنتور</Text>
       <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
-        <Ionicons name="arrow-forward" size={17} color="#fff" />
+        <Ionicons name="arrow-forward" size={24} color="#fff" />
       </TouchableOpacity>
     </View>
   );
@@ -30,5 +30,5 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   backButton: { marginLeft: 10 },
-  headerTitle: { fontSize: 14, color: "#fff", fontFamily: "iransans" },
+  headerTitle: { fontSize: 18, color: "#fff", fontFamily: "iransans" },
 });

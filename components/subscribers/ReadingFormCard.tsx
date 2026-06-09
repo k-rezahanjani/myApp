@@ -129,13 +129,13 @@ export const ReadingFormCard = ({
         <Text style={styles.cardHeaderText}>اطلاعات قرائت جدید</Text>
         <View style={{ marginRight: 'auto', flexDirection: 'row', gap: 15 }}>
           <TouchableOpacity onPress={() => console.log("اشتراک همسایه")}>
-            <Ionicons name='home-outline' size={20} color="#666" />
+            <Ionicons name='home-outline' size={24} color="#666" />
           </TouchableOpacity>
           <TouchableOpacity onPress={onDetailsPress}>
-            <Ionicons name="ellipsis-vertical" size={20} color="#666" />
+            <Ionicons name="ellipsis-vertical" size={24} color="#666" />
           </TouchableOpacity>
           <TouchableOpacity onPress={handleOpenMap}>
-            <Ionicons name="map-sharp" size={20} color="#666" />
+            <Ionicons name="map-sharp" size={24} color="#666" />
           </TouchableOpacity>
         </View>
       </View>
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cardHeaderText: { 
-    fontSize: 12, 
+    fontSize: 18, 
     fontWeight: "800", 
     color: "#333", 
     fontFamily: "iransans" 
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   label: { 
     textAlign: 'left', 
     marginBottom: 10, 
-    fontSize: 13, 
+    fontSize: 17, 
     color: '#666', 
     fontFamily: 'nazanin' 
   },
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingVertical: Platform.OS === "ios" ? 14 : 12,
-    fontSize: 14,
+    fontSize: 18,
     textAlign: "right",
     fontFamily: "nazanin",
   },
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     height: 55, 
     color: '#333', 
     fontFamily: 'nazanin', 
-    fontSize: 14, 
+    fontSize: 19, 
     textAlign: 'left', 
     direction: 'ltr' 
   },
@@ -386,14 +386,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   debugText: {
-    fontSize: 12,
+    fontSize: 17,
     fontWeight: 'bold',
     color: '#333',
     fontFamily: 'nazanin',
     marginBottom: 5,
   },
   debugTextSmall: {
-    fontSize: 11,
+    fontSize: 16,
     color: '#666',
     fontFamily: 'nazanin',
   },

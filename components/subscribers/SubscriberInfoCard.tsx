@@ -76,9 +76,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  cardHeaderText: { fontSize: 12, fontWeight: "800", color: "#333", fontFamily: "iransans" },
+  cardHeaderText: { fontSize: 18, fontWeight: "800", color: "#333", fontFamily: "iransans" },
   infoGrid: { gap: 16 },
   infoGridItem: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  infoLabel: { fontSize: 13, color: "#999", fontFamily: "nazanin" },
-  infoValue: { fontSize: 13, color: "#333", fontFamily: "nazanin", fontWeight: "500", textAlign: "left" },
+  infoLabel: { fontSize: 17, color: "#999", fontFamily: "nazanin" },
+  infoValue: { fontSize: 17, color: "#333", fontFamily: "nazanin", fontWeight: "500", textAlign: "left" },
 });

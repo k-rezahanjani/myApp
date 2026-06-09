@@ -79,10 +79,10 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   subscriberInfo: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 12 },
-  subscriberCode: { fontSize: 18, fontWeight: "bold", color: "#333", fontFamily: "iransans", marginBottom: 4, textAlign: "center" },
-  subscriberName: { fontSize: 13, color: "#666", fontFamily: "nazanin", textAlign: "center" },
+  subscriberCode: { fontSize: 21, fontWeight: "bold", color: "#333", fontFamily: "iransans", marginBottom: 4, textAlign: "center" },
+  subscriberName: { fontSize: 18, color: "#666", fontFamily: "nazanin", textAlign: "center" },
   navButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: "#f5f5f5", alignItems: "center", justifyContent: "center" },
   operationButton: { width: 100, height: 33, flexDirection: 'row', marginTop: 10, borderRadius: 5, backgroundColor: "#d6d6d6ff", alignItems: "center", justifyContent: "center" },
   navButtonDisabled: { opacity: 0.5 },
-  counterText: { textAlign: "center", marginTop: 8, fontSize: 11, color: "#999", fontFamily: "nazanin" },
+  counterText: { textAlign: "center", marginTop: 8, fontSize: 15, color: "#999", fontFamily: "nazanin" },
 });

@@ -82,10 +82,10 @@ export default function DetailsModal({ close, isVisible, data }: onProps) {
 const styles = StyleSheet.create({
   modalContent: { width: '100%', backgroundColor: '#ffffffff', borderTopRightRadius: 18, borderTopLeftRadius: 18, },
   titleContainer: { height: 50, backgroundColor: '#4a90e2', paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', },
-  title: { color: '#ffffffff', fontSize: 16 },
+  title: { color: '#ffffffff', fontSize: 20 },
   modalSavebtn: { flexDirection: 'row', justifyContent: 'center', backgroundColor: '#4a90e2', alignItems: 'center', width: 200, borderRadius: 5, margin: 'auto', paddingVertical: 5, marginTop: 10 },
   inputContainer: { flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: "#e5e5e5", borderRadius: 12, marginBottom: 12, backgroundColor: "#fafafa", direction: 'rtl' },
-  input: { flex: 1, paddingHorizontal: 16, paddingVertical: Platform.OS === "ios" ? 14 : 12, fontSize: 14, textAlign: "right", fontFamily: "nazanin" },
+  input: { flex: 1, paddingHorizontal: 16, paddingVertical: Platform.OS === "ios" ? 14 : 12, fontSize: 20, textAlign: "right", fontFamily: "nazanin" },
   fix: {
     flexDirection: 'row-reverse',
     justifyContent: 'space-between',

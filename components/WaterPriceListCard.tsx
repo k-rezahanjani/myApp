@@ -99,12 +99,12 @@ const WaterPriceListCard = ({ data, onDetailsPress, onContinuePress }: WaterPric
                   </Text>
                 </View>
                 <TouchableOpacity onPress={() => onDetailsPress?.(item)}>
-                  <Ionicons name='ellipsis-vertical' size={16} color="#666" style={{ marginLeft: 15 }} />
+                  <Ionicons name='ellipsis-vertical' size={24} color="#666" style={{ marginLeft: 15 }} />
                 </TouchableOpacity>
 
                 <Ionicons
                   name={expandedIndex === index ? "chevron-up" : "chevron-down"}
-                  size={20}
+                  size={24}
                   color="#666"
                 />
               </View>
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   regionText: {
-    fontSize: 14,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
     marginLeft: 5,
@@ -241,14 +241,14 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   infoLabel: {
-    fontSize: 11,
+    fontSize: 19,
     color: '#666',
     marginLeft: 5,
     marginRight: 3,
     fontFamily: 'iransans'
   },
   infoValue: {
-    fontSize: 13,
+    fontSize: 18,
     color: '#333',
     fontWeight: '500',
     flex: 1,
@@ -266,14 +266,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0e0e0',
     marginVertical: 10,
   },
-  expandedTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-    textAlign: 'right',
-    fontFamily: 'nazanin'
-  },
   expandedRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -283,18 +275,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#f0f0f0',
-  },
-  expandedLabel: {
-    fontSize: 13,
-    color: '#666',
-    marginLeft: 5,
-    marginRight: 5,
-    fontFamily: 'nazanin'
-  },
-  expandedValue: {
-    fontSize: 13,
-    color: '#333',
-    flex: 1,
   },
   actionButtons: {
     flexDirection: 'row',
@@ -317,20 +297,14 @@ const styles = StyleSheet.create({
   },
   detailsButtonText: {
     marginLeft: 8,
-    fontSize: 10,
+    fontSize: 17,
     color: '#4a90e2',
     fontWeight: '400',
     fontFamily: 'iransans'
   },
-  mapButtonText: {
-    marginLeft: 8,
-    fontSize: 13,
-    color: '#4caf50',
-    fontWeight: '500',
-  },
   emptyText: {
     marginTop: 10,
-    fontSize: 16,
+    fontSize: 20,
     color: '#999',
   },
 });

@@ -201,17 +201,17 @@ export default function HomeScreen() {
             <View style={{ flex: 3, justifyContent: 'space-between', flexDirection: 'row-reverse' }}>
               <Text style={styles.gardeshKar}>اطلاعات گردش کار</Text>
               <View style={{ flexDirection: 'row', direction: 'rtl', gap: 10 }}>
-                <TouchableOpacity>
+                {/* <TouchableOpacity>
                   <Ionicons name='document-sharp' size={20} color={'white'} />
                 </TouchableOpacity>
                 <TouchableOpacity>
                   <Ionicons name='notifications-sharp' size={20} color={'white'} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity onPress={handleNotification}>
-                  <Ionicons name='settings-sharp' size={20} color={'white'} />
+                  <Ionicons name='settings-sharp' size={24} color={'white'} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onRefresh}>
-                  <Ionicons name='reload-outline' size={20} color={'white'} />
+                  <Ionicons name='reload-outline' size={24} color={'white'} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   gardeshKar: {
-    fontSize: 16,
+    fontSize: 19,
     color: '#fff',
     opacity: 0.9,
     textAlign: 'right',
