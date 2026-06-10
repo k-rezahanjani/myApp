@@ -230,7 +230,7 @@ export default function LoginScreen() {
 
                 <View style={styles.footerText}>
                   <Text style={styles.versionText}>نسخه 1.1.0</Text>
-                  <Text style={styles.copyrightText}>© ۱۴۰۴ شرکت آتی رویکر افکار </Text>
+                  <Text style={styles.copyrightText}>© ۱۴۰۴ شرکت آتی رویکرد افکار </Text>
                 </View>
               </View>
             </BlurView>
