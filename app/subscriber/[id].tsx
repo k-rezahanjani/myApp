@@ -25,7 +25,6 @@ import { SubscriberInfoCard } from "../../components/subscribers/SubscriberInfoC
 import { ReadingFormCard } from "../../components/subscribers/ReadingFormCard";
 import { BottomNavigationBar } from "../../components/subscribers/BottomNavigationBar";
 
-
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export default function SubscriberScreen() {
@@ -52,6 +51,8 @@ export default function SubscriberScreen() {
 
   const slideAnim = useRef(new Animated.Value(0)).current;
   const [isChanging, setIsChanging] = useState(false);
+
+  const capturedLocationRef = useRef<{ latitude: number; longitude: number } | null>(null);
 
   const getReadStateDesc = useCallback((stateCode: string) => {
     const state = readBasicModel?.readDeviceSettingState?.find(
@@ -156,6 +157,7 @@ export default function SubscriberScreen() {
     }
   }, [selectedStatus, readBasicModel, selectedView]);
 
+
   const changeSubscriber = useCallback(
     (newIndex: number, direction: "next" | "prev") => {
       if (newIndex < 0 || newIndex >= subscribers.length || isChanging) return;
@@ -210,26 +212,27 @@ export default function SubscriberScreen() {
     .runOnJS(true);
   const combinedGestures = Gesture.Race(swipeRightGesture, swipeLeftGesture);
 
-  // Submit reading
-  const handleSubmitReading = async () => {
-    if (!readNumber) {
-      Alert.alert("خطا", "لطفاً رقم کنتور را وارد کنید");
-      return;
-    }
-    if (!selectedStatus) {
-      Alert.alert("خطا", "لطفاً وضعیت قرائت را انتخاب کنید");
-      return;
-    }
-    if (!selectedView) {
-      Alert.alert("خطا", "لطفاً مشاهده قرائت را انتخاب کنید");
-      return;
-    }
+  const handleSubmitReading = async (capturedLocation?: { latitude: number; longitude: number } | null) => {
+    // if (!readNumber) {
+    //   Alert.alert("خطا", "لطفاً رقم کنتور را وارد کنید");
+    //   return;
+    // }
+    // if (!selectedStatus) {
+    //   Alert.alert("خطا", "لطفاً وضعیت قرائت را انتخاب کنید");
+    //   return;
+    // }
+    // if (!selectedView) {
+    //   Alert.alert("خطا", "لطفاً مشاهده قرائت را انتخاب کنید");
+    //   return;
+    // }
 
     const current = subscribers[currentIndex];
     if (!current) {
       Alert.alert("خطا", "اطلاعات مشترک یافت نشد");
       return;
     }
+
+    const finalLocation = capturedLocation || capturedLocationRef.current;
 
     const payload = {
       ReceivedReadLineBaseInfo: [],
@@ -238,7 +241,7 @@ export default function SubscriberScreen() {
         boreDesc: current.boreDesc || "",
         cellPhone: current.cellPhone || "",
         currentUsageDetailDesc: current.currentUsageDetailDesc || current.usageDetailDesc || "",
-        gisLocation: current.gisLocation || [0, 0],
+        gisLocation: finalLocation ? [finalLocation.latitude, finalLocation.longitude] : [0, 0],
         hasNew: current.hasNew ?? 0,
         identityCode: current.identityCode || "",
         isLost: current.isLost ?? false,
@@ -274,29 +277,39 @@ export default function SubscriberScreen() {
         waterMeterSerial: current.waterMeterSerial || "",
         waterPriceDebtAmount: current.waterPriceDebtAmount ?? 0.0,
         waterPriceWorkId: workId,
-        xLocation: current.xLocation ?? 0,
-        yLocation: current.yLocation ?? 0,
+        xLocation: finalLocation ? finalLocation.latitude : (current.xLocation),
+        yLocation: finalLocation ? finalLocation.longitude : (current.yLocation),
         readNumber: Number(readNumber),
-        readDescription: readDescription,
+        description: String(readDescription),
       },
     };
+
+    console.log('📍 [PARENT] payload Final:', JSON.stringify(payload, null, 2));
+
+    console.log('📍 [PARENT] payload نهایی:', {
+      xLocation: payload.ReceivedWaterPriceWorkReadInfo.xLocation,
+      yLocation: payload.ReceivedWaterPriceWorkReadInfo.yLocation,
+    });
 
     setSubmitting(true);
     try {
       const result = await SaveWaterPriceList(payload);
       if (result.exception.code === 800) {
+        console.log('✅ [PARENT] ثبت با موفقیت انجام شد');
         Alert.alert('موفقیت', result?.exception.message);
+
+        capturedLocationRef.current = null;
       } else {
         Alert.alert('خطا', result?.exception.message);
       }
       setReadNumber("");
       setReadDescription("");
     } catch (error: any) {
-      console.error(error);
-      Alert.alert("خطا", error.message || "مشکل در ارتباط با سرور");
+      console.log('Error ', error)
     } finally {
       setSubmitting(false);
     }
+
   };
 
   const filteredViews = readBasicModel?.readDeviceSettingView?.filter(

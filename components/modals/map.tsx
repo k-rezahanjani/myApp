@@ -1,3 +1,204 @@
+// import React from 'react';
+// import {
+//   Modal,
+//   View,
+//   Text,
+//   TouchableOpacity,
+//   StyleSheet,
+//   Alert,
+// } from 'react-native';
+// import { WebView } from 'react-native-webview';
+// import { Ionicons } from '@expo/vector-icons';
+
+// interface MapProps {
+//   data: any;
+//   isVisible: boolean;
+//   close: () => void;
+// }
+
+// export default function MapScreen({
+//   data,
+//   isVisible,
+//   close,
+// }: MapProps) {
+
+//   const latitude = data?.xLocation;
+//   const longitude = data?.yLocation;
+
+//   const isValidCoordinates = 
+//     latitude !== null && 
+//     longitude !== null;
+
+//   if (!isValidCoordinates) {
+//     return (
+//       <Modal
+//         visible={isVisible}
+//         animationType="slide"
+//         onRequestClose={close}
+//       >
+//         <View style={styles.container}>
+//           <View style={styles.header}>
+//             <Text style={styles.title}>
+//               موقعیت مشترک
+//             </Text>
+
+//             <TouchableOpacity onPress={close}>
+//               <Ionicons
+//                 name="close"
+//                 size={24}
+//                 color="#333"
+//               />
+//             </TouchableOpacity>
+//           </View>
+
+//           <View style={styles.errorContainer}>
+//             <Ionicons 
+//               name="location-outline" 
+//               size={64} 
+//               color="#ccc" 
+//             />
+//             <Text style={styles.errorText}>
+//               موقعیت مکانی برای این مشترک ثبت نشده است
+//             </Text>
+//           </View>
+//         </View>
+//       </Modal>
+//     );
+//   }
+
+//   const html = `
+// <!DOCTYPE html>
+// <html>
+// <head>
+// <meta charset="utf-8" />
+// <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+// <link rel="stylesheet"
+//  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+// <style>
+// html,body,#map{
+//   height:100%;
+//   width:100%;
+//   margin:0;
+//   padding:0;
+// }
+// </style>
+// </head>
+
+// <body>
+
+// <div id="map"></div>
+
+// <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+// <script>
+
+// var map = L.map('map').setView(
+//   [${latitude}, ${longitude}],
+//   16
+// );
+
+// L.tileLayer(
+//   'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+//   {
+//     maxZoom: 19
+//   }
+// ).addTo(map);
+
+// L.marker([${latitude}, ${longitude}])
+//  .addTo(map)
+//  .openPopup();
+
+// </script>
+
+// </body>
+// </html>
+// `;
+
+//   return (
+//     <Modal
+//       visible={isVisible}
+//       animationType="slide"
+//       onRequestClose={close}
+//     >
+//       <View style={styles.container}>
+//         <View style={styles.header}>
+//           <Text style={styles.title}>
+//             موقعیت مشترک
+//           </Text>
+
+//           <TouchableOpacity onPress={close}>
+//             <Ionicons
+//               name="close"
+//               size={24}
+//               color="#333"
+//             />
+//           </TouchableOpacity>
+//         </View>
+
+//         <WebView
+//           source={{ html }}
+//           style={styles.map}
+//           javaScriptEnabled
+//           domStorageEnabled
+//         />
+//       </View>
+//     </Modal>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//   },
+
+//   header: {
+//     paddingTop: 50,
+//     paddingBottom: 15,
+//     paddingHorizontal: 20,
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     alignItems: 'center',
+//     backgroundColor: '#fff',
+//     borderBottomWidth: 1,
+//     borderBottomColor: '#f0f0f0',
+//   },
+
+//   title: {
+//     fontSize: 16,
+//     fontWeight: 'bold',
+//     color: '#333',
+//   },
+
+//   map: {
+//     flex: 1,
+//   },
+
+//   errorContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: '#f9f9f9',
+//     padding: 20,
+//   },
+
+//   errorText: {
+//     fontSize: 16,
+//     fontWeight: '600',
+//     color: '#666',
+//     textAlign: 'center',
+//     marginTop: 16,
+//     marginBottom: 8,
+//   },
+
+//   errorSubtext: {
+//     fontSize: 14,
+//     color: '#999',
+//     textAlign: 'center',
+//   },
+// });
+
 import React from 'react';
 import {
   Modal,
@@ -5,6 +206,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Platform,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,23 +215,60 @@ interface MapProps {
   data: any;
   isVisible: boolean;
   close: () => void;
+  needGis?: boolean;
+  onLocationCapture?: (location: { latitude: number; longitude: number }) => void;
 }
 
 export default function MapScreen({
   data,
   isVisible,
   close,
+  needGis = false,
+  onLocationCapture,
 }: MapProps) {
-  const latitude = Number(
-    data?.xLocation
-  );
+  const latitude = data?.xLocation ?? null;
+  const longitude = data?.yLocation ?? null;
 
-  const longitude = Number(
-    data?.yLocation
-  );
+  const isValidCoordinates =
+    latitude !== null &&
+    longitude !== null;
 
-  const subscriberName =
-    data?.subscriberName;
+  if (!isValidCoordinates) {
+    return (
+      <Modal
+        visible={isVisible}
+        animationType="slide"
+        onRequestClose={close}
+      >
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.title}>
+              موقعیت مشترک
+            </Text>
+
+            <TouchableOpacity onPress={close}>
+              <Ionicons
+                name="close"
+                size={24}
+                color="#333"
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.errorContainer}>
+            <Ionicons
+              name="location-outline"
+              size={64}
+              color="#ccc"
+            />
+            <Text style={styles.errorText}>
+              موقعیت مکانی برای این مشترک ثبت نشده است
+            </Text>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
 
   const html = `
 <!DOCTYPE html>
@@ -73,7 +312,6 @@ L.tileLayer(
 
 L.marker([${latitude}, ${longitude}])
  .addTo(map)
- .bindPopup('${subscriberName}')
  .openPopup();
 
 </script>
@@ -109,14 +347,6 @@ L.marker([${latitude}, ${longitude}])
           javaScriptEnabled
           domStorageEnabled
         />
-
-        {/* <View style={styles.footer}>
-          <Text style={styles.coords}>
-            {latitude.toFixed(6)}
-            {' , '}
-            {longitude.toFixed(6)}
-          </Text>
-        </View> */}
       </View>
     </Modal>
   );
@@ -128,31 +358,47 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    paddingTop: 50,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingBottom: 15,
     paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
   },
 
   title: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#333',
   },
 
   map: {
     flex: 1,
   },
 
-  footer: {
-    padding: 15,
-    backgroundColor: '#fff',
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    padding: 20,
   },
 
-  coords: {
-    textAlign: 'center',
+  errorText: {
+    fontSize: 16,
+    fontWeight: '600',
     color: '#666',
+    textAlign: 'center',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+
+  errorSubtext: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
   },
 });

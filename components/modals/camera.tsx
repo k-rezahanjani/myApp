@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface CameraScreenProps {
   visible: boolean;
@@ -38,14 +39,14 @@ export default function CameraScreen({ visible, onClose, onCapture }: CameraScre
         base64: false,
         exif: false,
       });
-      
+
       setCapturedImage(photo.uri);
-      
+
       if (onCapture) {
         onCapture(photo.uri);
       }
     } catch (error) {
-      console.error('خطا در گرفتن عکس:', error);
+      console.log('خطا در گرفتن عکس:', error);
       Alert.alert('خطا', 'مشکل در گرفتن عکس');
     } finally {
       setLoading(false);
@@ -68,15 +69,15 @@ export default function CameraScreen({ visible, onClose, onCapture }: CameraScre
     onClose();
   };
 
-  // درخواست مجوز دوربین
+
   if (!permission?.granted) {
     return (
       <Modal visible={visible} animationType="slide" transparent={false}>
         <View style={styles.permissionContainer}>
           <Ionicons name="camera-outline" size={60} color="#4a90e2" />
           <Text style={styles.permissionText}>برای استفاده از دوربین نیاز به مجوز دارید</Text>
-          <TouchableOpacity 
-            style={styles.permissionButton} 
+          <TouchableOpacity
+            style={styles.permissionButton}
             onPress={async () => {
               const result = await requestPermission();
               if (!result.granted) {
@@ -94,68 +95,70 @@ export default function CameraScreen({ visible, onClose, onCapture }: CameraScre
   }
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={false}>
-      <View style={styles.container}>
-        {!capturedImage ? (
-          <>
-            <CameraView
-              ref={cameraRef}
-              style={styles.camera}
-              facing="back"
-              onCameraReady={() => setCameraReady(true)}>
-              <View style={styles.cameraOverlay}>
-                <View style={styles.cameraHeader}>
-                  <Text style={styles.cameraTitle}>عکس از کنتور</Text>
-                  <TouchableOpacity onPress={handleClose} style={styles.closeCameraButton}>
-                    <Ionicons name="close" size={28} color="#fff" />
-                  </TouchableOpacity>
+    <SafeAreaView edges={['top', 'bottom']}>
+      <Modal visible={visible} animationType="slide" transparent={false}>
+        <View style={styles.container}>
+          {!capturedImage ? (
+            <>
+              <CameraView
+                ref={cameraRef}
+                style={styles.camera}
+                facing="back"
+                onCameraReady={() => setCameraReady(true)}>
+                <View style={styles.cameraOverlay}>
+                  <View style={styles.cameraHeader}>
+                    <Text style={styles.cameraTitle}>عکس از کنتور</Text>
+                    <TouchableOpacity onPress={handleClose} style={styles.closeCameraButton}>
+                      <Ionicons name="close" size={28} color="#fff" />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.cameraFooter}>
+                    <TouchableOpacity
+                      style={[styles.captureButton, !cameraReady && styles.captureButtonDisabled]}
+                      onPress={takePicture}
+                      disabled={!cameraReady || loading}>
+                      {loading ? (
+                        <ActivityIndicator color="#fff" size="large" />
+                      ) : (
+                        <View style={styles.captureInner} />
+                      )}
+                    </TouchableOpacity>
+
+                    <Text style={styles.cameraHint}>
+                      برای عکس گرفتن ضربه بزنید
+                    </Text>
+                  </View>
                 </View>
-                
-                <View style={styles.cameraFooter}>
-                  <TouchableOpacity 
-                    style={[styles.captureButton, !cameraReady && styles.captureButtonDisabled]} 
-                    onPress={takePicture}
-                    disabled={!cameraReady || loading}>
-                    {loading ? (
-                      <ActivityIndicator color="#fff" size="large" />
-                    ) : (
-                      <View style={styles.captureInner} />
-                    )}
-                  </TouchableOpacity>
-                  
-                  <Text style={styles.cameraHint}>
-                    برای عکس گرفتن ضربه بزنید
-                  </Text>
-                </View>
+              </CameraView>
+            </>
+          ) : (
+            <View style={styles.previewContainer}>
+              <Image source={{ uri: capturedImage }} style={styles.previewImage} />
+
+              <View style={styles.previewButtons}>
+                <TouchableOpacity style={styles.retakeButton} onPress={retakePhoto}>
+                  <Ionicons name="refresh" size={24} color="#fff" />
+                  <Text style={styles.buttonText}>دوباره</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.useButton} onPress={usePhoto}>
+                  <Ionicons name="checkmark" size={24} color="#fff" />
+                  <Text style={styles.buttonText}>استفاده</Text>
+                </TouchableOpacity>
               </View>
-            </CameraView>
-          </>
-        ) : (
-          <View style={styles.previewContainer}>
-            <Image source={{ uri: capturedImage }} style={styles.previewImage} />
-            
-            <View style={styles.previewButtons}>
-              <TouchableOpacity style={styles.retakeButton} onPress={retakePhoto}>
-                <Ionicons name="refresh" size={24} color="#fff" />
-                <Text style={styles.buttonText}>دوباره</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity style={styles.useButton} onPress={usePhoto}>
-                <Ionicons name="checkmark" size={24} color="#fff" />
-                <Text style={styles.buttonText}>استفاده</Text>
-              </TouchableOpacity>
             </View>
-          </View>
-        )}
-        
-        {loading && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="#4a90e2" />
-            <Text style={styles.loadingText}>در حال پردازش...</Text>
-          </View>
-        )}
-      </View>
-    </Modal>
+          )}
+
+          {loading && (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="large" color="#4a90e2" />
+              <Text style={styles.loadingText}>در حال پردازش...</Text>
+            </View>
+          )}
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 }
 

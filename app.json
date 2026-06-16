@@ -8,6 +8,9 @@
     "icon": "./assets/icon_ab.png",
     "userInterfaceStyle": "light",
     "jsEngine": "hermes",
+    "experiments": {
+      "newArchEnabled": false
+    },
     "ios": {
       "supportsTablet": true
     },
@@ -20,7 +23,8 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
+        "ACCESS_COARSE_LOCATION",
+        "FOREGROUND_SERVICE"
       ]
     },
     "web": {
@@ -43,7 +47,13 @@
           "cameraPermission": "اجازه دسترسی به دوربین برای گرفتن عکس"
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
     ],
     "extra": {
       "router": {},

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Redirect } from 'expo-router';
 import { View, ActivityIndicator } from 'react-native';
 import authServices from '../services/authService';
+import { SQLiteProvider } from 'expo-sqlite';
 
 export default function Index() {
   const [isReady, setIsReady] = useState(false);
@@ -26,9 +27,9 @@ export default function Index() {
 
   if (!isReady) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" />
+        </View>
     );
   }
 

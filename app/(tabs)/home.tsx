@@ -201,12 +201,6 @@ export default function HomeScreen() {
             <View style={{ flex: 3, justifyContent: 'space-between', flexDirection: 'row-reverse' }}>
               <Text style={styles.gardeshKar}>اطلاعات گردش کار</Text>
               <View style={{ flexDirection: 'row', direction: 'rtl', gap: 10 }}>
-                {/* <TouchableOpacity>
-                  <Ionicons name='document-sharp' size={20} color={'white'} />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Ionicons name='notifications-sharp' size={20} color={'white'} />
-                </TouchableOpacity> */}
                 <TouchableOpacity onPress={handleNotification}>
                   <Ionicons name='settings-sharp' size={24} color={'white'} />
                 </TouchableOpacity>
