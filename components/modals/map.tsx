@@ -278,7 +278,7 @@ export default function MapScreen({
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet"
- href="http://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
 html,body,#map{
@@ -294,7 +294,7 @@ html,body,#map{
 
 <div id="map"></div>
 
-<script src="http://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 
@@ -346,6 +346,9 @@ L.marker([${latitude}, ${longitude}])
           style={styles.map}
           javaScriptEnabled
           domStorageEnabled
+          originWhitelist={['*']}
+          allowFileAccess={true}
+          allowUniversalAccessFromFileURLs={true}
         />
       </View>
     </Modal>
