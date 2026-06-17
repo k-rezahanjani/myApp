@@ -8,22 +8,28 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  ScrollView,
+  Dimensions,
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const { width } = Dimensions.get('window');
+
 interface CameraScreenProps {
   visible: boolean;
   onClose: () => void;
-  onCapture?: (uri: string) => void;
+  onCapture?: (uris: string[]) => void;
 }
 
 export default function CameraScreen({ visible, onClose, onCapture }: CameraScreenProps) {
   const [permission, requestPermission] = useCameraPermissions();
   const [cameraReady, setCameraReady] = useState(false);
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [tempImage, setTempImage] = useState<string | null>(null);
   const cameraRef = useRef<any>(null);
 
   const takePicture = async () => {
@@ -40,11 +46,8 @@ export default function CameraScreen({ visible, onClose, onCapture }: CameraScre
         exif: false,
       });
 
-      setCapturedImage(photo.uri);
-
-      if (onCapture) {
-        onCapture(photo.uri);
-      }
+      setTempImage(photo.uri);
+      setShowPreview(true);
     } catch (error) {
       console.log('خطا در گرفتن عکس:', error);
       Alert.alert('خطا', 'مشکل در گرفتن عکس');
@@ -53,22 +56,54 @@ export default function CameraScreen({ visible, onClose, onCapture }: CameraScre
     }
   };
 
-  const usePhoto = () => {
-    if (capturedImage && onCapture) {
-      onCapture(capturedImage);
+  const confirmPhoto = () => {
+    if (tempImage) {
+      setCapturedImages(prev => [...prev, tempImage]);
+      setTempImage(null);
+      setShowPreview(false);
     }
-    onClose();
   };
 
   const retakePhoto = () => {
-    setCapturedImage(null);
+    setTempImage(null);
+    setShowPreview(false);
+  };
+
+  const removeImage = (index: number) => {
+    Alert.alert(
+      'حذف عکس',
+      'آیا از حذف این عکس مطمئن هستید؟',
+      [
+        { text: 'لغو', style: 'cancel' },
+        {
+          text: 'حذف',
+          onPress: () => {
+            setCapturedImages(prev => prev.filter((_, i) => i !== index));
+          },
+          style: 'destructive'
+        }
+      ]
+    );
+  };
+
+  const confirmAllImages = () => {
+    if (capturedImages.length === 0) {
+      Alert.alert('خطا', 'هیچ عکسی گرفته نشده است');
+      return;
+    }
+
+    if (onCapture) {
+      onCapture(capturedImages);
+    }
+    handleClose();
   };
 
   const handleClose = () => {
-    setCapturedImage(null);
+    setCapturedImages([]);
+    setTempImage(null);
+    setShowPreview(false);
     onClose();
   };
-
 
   if (!permission?.granted) {
     return (
@@ -93,31 +128,68 @@ export default function CameraScreen({ visible, onClose, onCapture }: CameraScre
       </Modal>
     );
   }
-
   return (
-    <SafeAreaView edges={['top', 'bottom']}>
-      <Modal visible={visible} animationType="slide" transparent={false}>
+    <Modal visible={visible} animationType="slide" transparent={false}>
+      <SafeAreaView style={styles.container} edges={['top']}>
         <View style={styles.container}>
-          {!capturedImage ? (
-            <>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>
+              {capturedImages.length > 0 ? `${capturedImages.length} عکس گرفته شده` : 'دوربین'}
+            </Text>
+            <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+              <Ionicons name="close" size={28} color="#fff" />
+            </TouchableOpacity>
+          </View>
+
+          {!showPreview ? (
+            <View style={styles.cameraWrapper}>
               <CameraView
                 ref={cameraRef}
                 style={styles.camera}
                 facing="back"
-                onCameraReady={() => setCameraReady(true)}>
+                onCameraReady={() => setCameraReady(true)}
+              >
                 <View style={styles.cameraOverlay}>
-                  <View style={styles.cameraHeader}>
-                    <Text style={styles.cameraTitle}>عکس از کنتور</Text>
-                    <TouchableOpacity onPress={handleClose} style={styles.closeCameraButton}>
-                      <Ionicons name="close" size={28} color="#fff" />
-                    </TouchableOpacity>
-                  </View>
+                  {capturedImages.length > 0 && (
+                    <View style={styles.thumbnailsContainer}>
+                      <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.thumbnailsScroll}
+                      >
+                        {capturedImages.map((uri, index) => (
+                          <TouchableOpacity
+                            key={index}
+                            style={styles.thumbnailWrapper}
+                            onPress={() => removeImage(index)}
+                          >
+                            <Image source={{ uri }} style={styles.thumbnail} />
+                            <View style={styles.thumbnailOverlay}>
+                              <Ionicons name="close-circle" size={20} color="#ff4444" />
+                            </View>
+                            <Text style={styles.thumbnailNumber}>{index + 1}</Text>
+                          </TouchableOpacity>
+                        ))}
+                      </ScrollView>
+                    </View>
+                  )}
 
-                  <View style={styles.cameraFooter}>
+                  <View style={styles.footer}>
+                    {capturedImages.length > 0 && (
+                      <TouchableOpacity
+                        style={styles.confirmAllButton}
+                        onPress={confirmAllImages}
+                      >
+                        <Ionicons name="checkmark-done-circle" size={24} color="#fff" />
+                        <Text style={styles.confirmAllText}>تایید همه</Text>
+                      </TouchableOpacity>
+                    )}
+
                     <TouchableOpacity
                       style={[styles.captureButton, !cameraReady && styles.captureButtonDisabled]}
                       onPress={takePicture}
-                      disabled={!cameraReady || loading}>
+                      disabled={!cameraReady || loading}
+                    >
                       {loading ? (
                         <ActivityIndicator color="#fff" size="large" />
                       ) : (
@@ -125,47 +197,65 @@ export default function CameraScreen({ visible, onClose, onCapture }: CameraScre
                       )}
                     </TouchableOpacity>
 
-                    <Text style={styles.cameraHint}>
-                      برای عکس گرفتن ضربه بزنید
-                    </Text>
+                    {capturedImages.length > 0 && (
+                      <View style={styles.countBadge}>
+                        <Text style={styles.countText}>{capturedImages.length}</Text>
+                      </View>
+                    )}
                   </View>
                 </View>
               </CameraView>
-            </>
+            </View>
           ) : (
             <View style={styles.previewContainer}>
-              <Image source={{ uri: capturedImage }} style={styles.previewImage} />
+              {tempImage && (
+                <Image source={{ uri: tempImage }} style={styles.previewImage} />
+              )}
 
               <View style={styles.previewButtons}>
                 <TouchableOpacity style={styles.retakeButton} onPress={retakePhoto}>
-                  <Ionicons name="refresh" size={24} color="#fff" />
+                  <Ionicons name="refresh" size={28} color="#fff" />
                   <Text style={styles.buttonText}>دوباره</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.useButton} onPress={usePhoto}>
-                  <Ionicons name="checkmark" size={24} color="#fff" />
-                  <Text style={styles.buttonText}>استفاده</Text>
+                <TouchableOpacity style={styles.useButton} onPress={confirmPhoto}>
+                  <Ionicons name="checkmark" size={28} color="#fff" />
+                  <Text style={styles.buttonText}>تایید</Text>
                 </TouchableOpacity>
               </View>
             </View>
           )}
-
-          {loading && (
-            <View style={styles.loadingOverlay}>
-              <ActivityIndicator size="large" color="#4a90e2" />
-              <Text style={styles.loadingText}>در حال پردازش...</Text>
-            </View>
-          )}
         </View>
-      </Modal>
-    </SafeAreaView>
+      </SafeAreaView>
+    </Modal>
   );
+
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    backgroundColor: 'rgba(0,0,0,0.9)',
+    zIndex: 10,
+  },
+  headerTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  closeButton: {
+    padding: 5,
+  },
+  cameraWrapper: {
+    flex: 1,
   },
   camera: {
     flex: 1,
@@ -175,26 +265,68 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     justifyContent: 'space-between',
   },
-  cameraHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 50,
-    paddingBottom: 20,
+  thumbnailsContainer: {
+    paddingTop: 10,
+    paddingHorizontal: 10,
   },
-  cameraTitle: {
+  thumbnailsScroll: {
+    paddingHorizontal: 5,
+  },
+  thumbnailWrapper: {
+    marginHorizontal: 4,
+    position: 'relative',
+  },
+  thumbnail: {
+    width: 55,
+    height: 55,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#4a90e2',
+  },
+  thumbnailOverlay: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+  },
+  thumbnailNumber: {
+    position: 'absolute',
+    bottom: -5,
+    left: 5,
+    backgroundColor: 'rgba(0,0,0,0.7)',
     color: '#fff',
-    fontSize: 18,
-    fontFamily: 'iransans',
-    fontWeight: 'bold',
+    fontSize: 9,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 6,
   },
-  closeCameraButton: {
-    padding: 10,
-  },
-  cameraFooter: {
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 40,
+    paddingHorizontal: 20,
+    gap: 20,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'transparent',
+  },
+  confirmAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#34c759',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 25,
+    gap: 6,
+  },
+  confirmAllText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   captureButton: {
     width: 70,
@@ -203,7 +335,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.3)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
   },
   captureButtonDisabled: {
     opacity: 0.5,
@@ -213,21 +344,26 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     backgroundColor: '#fff',
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: '#4a90e2',
   },
-  cameraHint: {
+  countBadge: {
+    backgroundColor: '#4a90e2',
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    minWidth: 30,
+    alignItems: 'center',
+  },
+  countText: {
     color: '#fff',
-    fontSize: 12,
-    fontFamily: 'nazanin',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    borderRadius: 20,
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   previewContainer: {
     flex: 1,
     backgroundColor: '#000',
+    justifyContent: 'center',
   },
   previewImage: {
     flex: 1,
@@ -237,6 +373,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 20,
+    backgroundColor: 'rgba(0,0,0,0.9)',
     gap: 10,
   },
   retakeButton: {
@@ -245,8 +382,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#ff4444',
-    padding: 12,
-    borderRadius: 10,
+    padding: 14,
+    borderRadius: 12,
     gap: 8,
   },
   useButton: {
@@ -255,14 +392,59 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#34c759',
-    padding: 12,
-    borderRadius: 10,
+    padding: 14,
+    borderRadius: 12,
     gap: 8,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 14,
-    fontFamily: 'nazanin',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  bottomImagesContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    maxHeight: 110,
+  },
+  bottomImagesScroll: {
+    paddingHorizontal: 10,
+    alignItems: 'center',
+  },
+  bottomImageWrapper: {
+    marginHorizontal: 5,
+    position: 'relative',
+  },
+  bottomImage: {
+    width: 75,
+    height: 75,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#4a90e2',
+  },
+  bottomRemoveButton: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+  },
+  bottomImageNumber: {
+    position: 'absolute',
+    bottom: -5,
+    left: 5,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+  },
+  bottomImageNumberText: {
+    color: '#fff',
+    fontSize: 10,
   },
   permissionContainer: {
     flex: 1,
@@ -276,7 +458,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
-    fontFamily: 'nazanin',
   },
   permissionButton: {
     marginTop: 20,
@@ -288,7 +469,6 @@ const styles = StyleSheet.create({
   permissionButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontFamily: 'nazanin',
   },
   closePermissionButton: {
     marginTop: 10,
@@ -297,22 +477,6 @@ const styles = StyleSheet.create({
   closePermissionText: {
     color: '#999',
     fontSize: 14,
-    fontFamily: 'nazanin',
   },
-  loadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 10,
-    color: '#fff',
-    fontSize: 14,
-    fontFamily: 'nazanin',
-  },
+
 });
