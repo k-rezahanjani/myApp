@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { Ionicons } from '@expo/vector-icons';
+import MapView, { Marker, UrlTile } from 'react-native-maps';
 
 interface MapProps {
   data: any;
@@ -25,8 +26,8 @@ export default function MapScreen({
   const latitude = data?.xLocation;
   const longitude = data?.yLocation;
 
-  const isValidCoordinates = 
-    latitude !== null && 
+  const isValidCoordinates =
+    latitude !== null &&
     longitude !== null;
 
   if (!isValidCoordinates) {
@@ -52,10 +53,10 @@ export default function MapScreen({
           </View>
 
           <View style={styles.errorContainer}>
-            <Ionicons 
-              name="location-outline" 
-              size={64} 
-              color="#ccc" 
+            <Ionicons
+              name="location-outline"
+              size={64}
+              color="#ccc"
             />
             <Text style={styles.errorText}>
               موقعیت مکانی برای این مشترک ثبت نشده است
@@ -66,55 +67,55 @@ export default function MapScreen({
     );
   }
 
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  //   const html = `
+  // <!DOCTYPE html>
+  // <html>
+  // <head>
+  // <meta charset="utf-8" />
+  // <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet"
- href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  // <link rel="stylesheet"
+  //  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-<style>
-html,body,#map{
-  height:100%;
-  width:100%;
-  margin:0;
-  padding:0;
-}
-</style>
-</head>
+  // <style>
+  // html,body,#map{
+  //   height:100%;
+  //   width:100%;
+  //   margin:0;
+  //   padding:0;
+  // }
+  // </style>
+  // </head>
 
-<body>
+  // <body>
 
-<div id="map"></div>
+  // <div id="map"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  // <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script>
+  // <script>
 
-var map = L.map('map').setView(
-  [${latitude}, ${longitude}],
-  16
-);
+  // var map = L.map('map').setView(
+  //   [${latitude}, ${longitude}],
+  //   16
+  // );
 
-L.tileLayer(
-  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    maxZoom: 19
-  }
-).addTo(map);
+  // L.tileLayer(
+  //   'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  //   {
+  //     maxZoom: 19
+  //   }
+  // ).addTo(map);
 
-L.marker([${latitude}, ${longitude}])
- .addTo(map)
- .openPopup();
+  // L.marker([${latitude}, ${longitude}])
+  //  .addTo(map)
+  //  .openPopup();
 
-</script>
+  // </script>
 
-</body>
-</html>
-`;
+  // </body>
+  // </html>
+  // `;
 
   return (
     <Modal
@@ -136,13 +137,28 @@ L.marker([${latitude}, ${longitude}])
             />
           </TouchableOpacity>
         </View>
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: latitude,
+            longitude: longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421
+          }}
+        >
+          <UrlTile
+            urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            maximumZ={19}
+          />
+          {/* <Marker coordinate={{ latitude: latitude, longitude: longitude }} title='موقعیت مشترک' /> */}
+        </MapView>
 
-        <WebView
+        {/* <WebView
           source={{ html }}
           style={styles.map}
           javaScriptEnabled
           domStorageEnabled
-        />
+        /> */}
       </View>
     </Modal>
   );
